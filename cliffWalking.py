@@ -15,9 +15,9 @@ print(__doc__)
 
 class CliffWalking:
     """
-    Class Gambler.
-    Have all methods needed to implement the Gambler's problem
-    with value iteration.
+    Class CliffWalking.
+    Have all methods needed to implement the Cliff Walking
+    with Q-Learning.
     """
     
     def __init__(self, rows, columns, episodes, alpha=0.5, discount=1, epsilon=0.1):
@@ -31,7 +31,9 @@ class CliffWalking:
         self.epsilon = epsilon
         
     def setup(self):
-    
+        """
+        Initialize the reward matrix, Q value and set the terminal states.
+        """
         self.Q = np.zeros((self.rows, self.columns, 4))
                 
         self.reward = np.full((self.rows, self.columns),-1) 
@@ -69,6 +71,8 @@ class CliffWalking:
         elif action == 3: # Right
             new_row = state[0]
             new_columns = min(self.columns - 1, state[1] + 1)
+
+        # if it is on cliff than oes back to the start position
         if [new_row, new_columns] in self.cliff_position:
             new_row, new_columns = self.start_position
         return [new_row, new_columns], action
@@ -79,14 +83,24 @@ class CliffWalking:
         """
         for _ in range(self.episodes):
             reward_sum = 0
+
+            # The first state is on the start position
             state = self.start_position
+
+            # Stay in loop until get to the end position
             while state != self.end_position:
+
+                # Compute the next state and action using epsilon greedy method
                 next_state, action = self.compute_next_state(state)
+
+                # Compute Q(s,a)
                 self.Q[state[0], state[1], action] += self.alpha * (self.reward[next_state[0], next_state[1]] 
                                                     + self.discount * np.max(self.Q[next_state[0], next_state[1], action]) 
                                                     -self.Q[state[0], state[1], action])
                 state = next_state
                 reward_sum += self.reward[next_state[0], next_state[1]]
+
+            # Store the total reward earned for each episode    
             self.reward_recorded.append(reward_sum)
                 
 
@@ -100,46 +114,50 @@ class CliffWalking:
 
     def plot_results(self):
         """
-        Plot on a graph the value matrix and the policy matrix
+        Plot on a graph the value matrix with the optimal trajectory
+        Plot the graph Episode x Reward
         """
+        plt.subplot(2, 1, 1)
         plt.plot(self.reward_recorded)
         plt.title("Q-Learning Performance")
         plt.xlabel('Episode')
-        plt.ylabel('Reward')
+        plt.ylabel('Total Reward')
+
+        arrows = ['↑', '↓', '←', '→']
+        ax = plt.subplot(2, 1, 2)
+
+        value = np.zeros((self.rows, self.columns))
+        for i in range(self.rows):
+            for j in range(self.columns):
+                value[i,j] = np.max(self.Q[i, j, :])
+
+        value_grid = np.around(value, decimals=2)
+        value_table = ax.table(cellText=value_grid, cellLoc='center', loc='center', bbox=[0, 0, 1, 1])
+        value_table.auto_set_font_size(False)
+        value_table.set_fontsize(12)
+
+        for i in range(self.rows):
+            for j in range(self.columns):
+                action = np.argmax(self.Q[i, j, :])
+                arrow_symbol = arrows[action]
+                value_table[i, j].get_text().set_text(f'{action}{arrow_symbol}')
+                value_table[i, j].get_text().set_fontsize(14)
+
+        for i in range(1, self.columns-1):
+            value_table[self.rows-1, i].get_text().set_text('C')   
+            value_table[self.rows-1, i].set_facecolor('red')
+
+        value_table[self.rows-1, 0].set_facecolor('grey')
+        value_table[self.rows-1, 0].get_text().set_text('S')
+        value_table[self.rows-1, self.columns-1].set_facecolor('lightgreen')
+        value_table[self.rows-1, self.columns-1].get_text().set_text('E')        
+        value_table[self.rows-1, 0].set_facecolor('grey')
+        value_table[self.rows-1, 0].get_text().set_text('S')
+        value_table[self.rows-1, self.columns-1].set_facecolor('lightgreen')
+        value_table[self.rows-1, self.columns-1].get_text().set_text('E')
+
         plt.show()
 
-        # arrows = ['↑', '↓', '←', '→']
-        # fig, (ax1, ax2) = plt.subplots(1, 2)
-        # fig.suptitle('Value and Policy k = '+ str(k), fontsize=16)
-
-        # ax1.axis('off')
-        # ax2.axis('off')
-
-        # value_grid = np.around(self.value_grid, decimals=2)
-        # value_table = ax1.table(cellText=value_grid, cellLoc='center', loc='center', bbox=[0, 0, 1, 1])
-        # value_table.auto_set_font_size(False)
-        # value_table.set_fontsize(14)
-        # value_table[0, 0].set_facecolor('lightgreen')
-        # value_table[self.grid_rows-1, self.grid_columns-1].set_facecolor('lightgreen')
-
-        # policy_table = ax2.table(cellText=self.policy, loc='center', cellLoc='center', bbox=[0, 0, 1, 1])
-        # policy_table.auto_set_font_size(False)
-        # policy_table.set_fontsize(14)
-        # policy_table[0, 0].set_facecolor('lightgreen')
-        # policy_table[self.grid_rows-1, self.grid_columns-1].set_facecolor('lightgreen')
-        
-        # for i in range(self.policy.shape[0]):
-        #     for j in range(self.policy.shape[1]):
-        #         if [i,j] != [0,0] and [i,j] != [self.grid_rows-1, self.grid_columns-1]:
-        #             value = self.policy[i, j]
-        #             arrow_symbol = arrows[value]
-        #             policy_table[i, j].get_text().set_text(f'{value} {arrow_symbol}')
-        #             policy_table[i, j].get_text().set_fontsize(14)
-        #         else:
-        #             policy_table[i, j].get_text().set_text('')
-        # plt.show()
-
-
 if __name__ == "__main__":
-    cw = CliffWalking(4, 12, 500) 
+    cw = CliffWalking(4, 12, 500, 0.4) 
     cw.compute()
