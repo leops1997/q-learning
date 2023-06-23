@@ -125,6 +125,7 @@ class CliffWalking:
 
         arrows = ['↑', '↓', '←', '→']
         ax = plt.subplot(2, 1, 2)
+        ax.axis('off')
 
         value = np.zeros((self.rows, self.columns))
         for i in range(self.rows):
@@ -159,5 +160,5 @@ class CliffWalking:
         plt.show()
 
 if __name__ == "__main__":
-    cw = CliffWalking(4, 12, 500, 0.4) 
+    cw = CliffWalking(4, 12, 500, 0.4, 1, 0.6) 
     cw.compute()
