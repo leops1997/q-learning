@@ -1,25 +1,16 @@
 # q-learning
 
 
-## Files you'll edit:
+### 1) Value iteration for a grid-world (Question 1): 
 
 valueIterationAgents.py
 
+## 2) Q-Learning from scratch for Example 6.6: Cliff Walking from the Sutton & Barto book (page 132):
+
+
+## 3) Q-Learning for PacMan (Questions 6, 7 and Question 9)
+
 qlearningAgents.py
-
-analysis.py
-
-## Files you should read but NOT edit:
-
-mdp.py
-
-learningAgents.py
-
-util.py
-
-gridworld.py
-
-featureExtractors.py
 
 ## Link
 

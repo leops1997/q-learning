@@ -105,13 +105,15 @@ class ValueIterationAgent(ValueEstimationAgent):
           terminal state, you should return None.
         """
         values = util.Counter()
+
+        # if it's on a terminal state then return None
         if not self.mdp.isTerminal(state):
 
             # Return list of possible actions from 'state'
             actions = self.mdp.getPossibleActions(state) 
             for action in actions:
                 values[action] = self.getQValue(state, action)
-                
+
             return values.argMax()
         
         else: return None
