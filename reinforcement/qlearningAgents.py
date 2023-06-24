@@ -75,13 +75,13 @@ class QLearningAgent(ReinforcementAgent):
           are no legal actions, which is the case at the terminal state,
           you should return None.
         """
-        max_value = -1.0
+        max_value = float('-inf')
         best_action = None
         actions = self.getLegalActions(state)
         if len(actions) > 0:
           for action in actions:
             value = self.getQValue(state, action)
-            if value >= max_value:
+            if value > max_value:
               best_action = action
               max_value = value
         return best_action
