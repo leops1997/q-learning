@@ -134,14 +134,13 @@ class CliffWalking:
 
         value_grid = np.around(value, decimals=2)
         value_table = ax.table(cellText=value_grid, cellLoc='center', loc='center', bbox=[0, 0, 1, 1])
-        value_table.auto_set_font_size(False)
-        value_table.set_fontsize(12)
+        value_table.auto_set_font_size(True)
 
         for i in range(self.rows):
             for j in range(self.columns):
                 action = np.argmax(self.Q[i, j, :])
                 arrow_symbol = arrows[action]
-                value_table[i, j].get_text().set_text(f'{action}{arrow_symbol}')
+                value_table[i, j].get_text().set_text(f'{self.Q[i, j, action]:.0f}{arrow_symbol}')
                 value_table[i, j].get_text().set_fontsize(14)
 
         for i in range(1, self.columns-1):
