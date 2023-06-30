@@ -95,7 +95,7 @@ class CliffWalking:
 
                 # Compute Q(s,a)
                 self.Q[state[0], state[1], action] += self.alpha * (self.reward[next_state[0], next_state[1]] 
-                                                    + self.discount * np.max(self.Q[next_state[0], next_state[1], action]) 
+                                                    + self.discount * np.max(self.Q[next_state[0], next_state[1], :]) 
                                                     -self.Q[state[0], state[1], action])
                 state = next_state
                 reward_sum += self.reward[next_state[0], next_state[1]]
@@ -159,5 +159,5 @@ class CliffWalking:
         plt.show()
 
 if __name__ == "__main__":
-    cw = CliffWalking(4, 12, 500, 0.4, 1, 0.6) 
+    cw = CliffWalking(4, 12, 500, 0.4, 1, 0.01) 
     cw.compute()
